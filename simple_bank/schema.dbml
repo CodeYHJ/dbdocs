@@ -1,0 +1,38 @@
+Table accounts as A {
+  id bigserial [pk]
+  owner varchar [not null, note: '拥有者']
+  balance bigint [not null, note: '账户余额' ]
+  currency varchar [not null, note: '货币名称']
+  created_at timestamptz [not null, default: `now()`]
+  
+  Indexes{
+    owner
+  }
+}
+
+// all changes to the account balance it
+Table entries {
+  id bigserial [pk]
+  account_id bigserial [not null, ref: > A.id]
+  amount bigint [not null, note: '金额']
+  created_at timestamptz [not null, default: `now()`]
+    
+  Indexes{
+    account_id
+  }
+}
+
+// transfers between two account
+Table transfers {
+  id bigserial [pk]
+  from_account_id bigserial [not null,ref: > A.id]
+  to_account_id bigserial [not null,ref: > A.id]
+  amount bigint [not null, note: '金额']
+  created_at timestamptz [not null, default: `now()`]
+    
+  Indexes{
+    from_account_id
+    to_account_id
+    (from_account_id, to_account_id)
+  }
+}

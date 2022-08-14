@@ -1,0 +1,32 @@
+Table brand as b {
+  id bigserial [pk]
+  p_brand_id int [not null, note:'平台id']
+  name varchar [not null, note:'品牌名字']
+}
+
+Table factories as f {
+   id bigserial [pk]
+   name varchar [not null, note:'厂家']
+   p_factory_id int [not null, note:'平台id']
+}
+
+Table cars as c {
+  id bigserial [pk]
+  name varchar [not null, note:'汽车名字']
+  p_car_id int [not null, note:'平台id']
+}
+
+Table sales as s {
+  id bigserial [pk]
+  num decimal [not null, note:'销量']
+  date timestampsz [not null, note:'销售月份']
+  sales_type int [not null, note:'销量类型']
+}
+
+Table relations {
+  id bigserial [pk]
+  sales_id bigserial [not null, ref: > s.id]
+  factory_id bigserial [not null, ref: > f.id]
+  brand_id bigserial [not null, ref: > b.id]
+  car_id bigserial [not null, ref: > c.id]
+}

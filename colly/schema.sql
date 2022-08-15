@@ -1,8 +1,8 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2022-08-14T14:11:24.241Z
+-- Generated at: 2022-08-15T09:20:26.326Z
 
-CREATE TABLE "brand" (
+CREATE TABLE "brands" (
   "id" bigserial PRIMARY KEY,
   "p_brand_id" int NOT NULL,
   "name" varchar NOT NULL
@@ -23,7 +23,7 @@ CREATE TABLE "cars" (
 CREATE TABLE "sales" (
   "id" bigserial PRIMARY KEY,
   "num" decimal NOT NULL,
-  "date" timestampsz NOT NULL,
+  "date" timestamptz NOT NULL,
   "sales_type" int NOT NULL
 );
 
@@ -35,9 +35,9 @@ CREATE TABLE "relations" (
   "car_id" bigserial NOT NULL
 );
 
-COMMENT ON COLUMN "brand"."p_brand_id" IS '平台id';
+COMMENT ON COLUMN "brands"."p_brand_id" IS '平台id';
 
-COMMENT ON COLUMN "brand"."name" IS '品牌名字';
+COMMENT ON COLUMN "brands"."name" IS '品牌名字';
 
 COMMENT ON COLUMN "factories"."name" IS '厂家';
 
@@ -57,6 +57,6 @@ ALTER TABLE "relations" ADD FOREIGN KEY ("sales_id") REFERENCES "sales" ("id");
 
 ALTER TABLE "relations" ADD FOREIGN KEY ("factory_id") REFERENCES "factories" ("id");
 
-ALTER TABLE "relations" ADD FOREIGN KEY ("brand_id") REFERENCES "brand" ("id");
+ALTER TABLE "relations" ADD FOREIGN KEY ("brand_id") REFERENCES "brands" ("id");
 
 ALTER TABLE "relations" ADD FOREIGN KEY ("car_id") REFERENCES "cars" ("id");

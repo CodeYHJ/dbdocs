@@ -2,25 +2,28 @@ Table brands as B {
   id bigserial [pk]
   p_brand_id int [not null, note:'平台id']
   name varchar [not null, note:'品牌名字']
+  created_at timestamptz [not null, default: 'now()']
 }
 
 Table factories as F {
    id bigserial [pk]
    name varchar [not null, note:'厂家']
    p_factory_id int [not null, note:'平台id']
+   created_at timestamptz [not null, default: 'now()']
 }
 
 Table cars as C{
   id bigserial [pk]
   name varchar [not null, note:'汽车名字']
   p_car_id int [not null, note:'平台id']
+  created_at timestamptz [not null, default: 'now()']
 }
 
 Table sales as S {
   id bigserial [pk]
-  num decimal [not null, note:'销量']
+  num decimal(3,2) [not null, note:'销量']
   date timestamptz [not null, note:'销售月份']
-  sales_type int [not null, note:'销量类型']
+  created_at timestamptz [not null, default: 'now()']
 }
 
 Table relations {
@@ -29,4 +32,21 @@ Table relations {
   factory_id bigserial [not null, ref: > F.id]
   brand_id bigserial [not null, ref: > B.id]
   car_id bigserial [not null, ref: > C.id]
+  created_at timestamptz [not null, default: 'now()']
+}
+
+Table brand_sales {
+  id bigserial [pk]
+  num decimal(3,2) [not null, note:'销量']
+  date timestamptz [not null, note:'销售月份']
+  brand_id bigserial [not null,ref: > B.id, Note: '品牌id']
+  created_at timestamptz [not null, default: 'now()']
+}
+
+Table factory_sales {
+  id bigserial [pk]
+  num decimal(3,2) [not null, note:'销量']
+  date timestamptz [not null, note:'销售月份']
+  factory_id bigserial [not null,ref: > F.id, Note: '厂商id']
+  created_at timestamptz [not null, default: 'now()']
 }

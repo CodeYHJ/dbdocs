@@ -1,0 +1,35 @@
+enum payTypeMethod {
+    wechat 
+    ali
+}
+
+enum StatusEnum {
+  success [note:'交易成功']
+  fail [note:'交易失败']
+  close [note:'交易关闭']
+
+}
+
+table pays as p{
+  id bigserial [pk]
+  type varchar [not null, note:'收/支']
+  person varchar [note:'交易人员']
+  account varchar [note:'对方账号']
+  instructions text [note:'说明']
+  type_method varchar [note:'支付方式']
+  amount int8 [note:'金额,实际金额乘以100']
+  status StatusEnum [note:'交易状态']
+  category bigserial [ref: > p_c.id, note:'交易类型']
+  trading_hours timestamptz [note:'交易时间']
+  remark text [note:'备注']
+  pay_type payTypeMethod [note:'支付工具类型']
+  create_at timestamptz [not null, default: 'now()']
+}
+
+table pay_category as p_c {
+    id bigserial [pk]
+    name varchar [not null, note:'名字']
+    pid int8 [not null, default: 0, note:'父级id']
+    ancestors varchar [not null, note:'tag树的路径,逗号隔开']
+    create_at timestamptz [not null, default: 'now()']
+}

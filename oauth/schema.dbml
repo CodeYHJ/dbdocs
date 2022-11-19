@@ -1,0 +1,42 @@
+Enum user_status {
+    valid
+    invalid
+}
+
+Enum permission {
+    admin
+    common
+    visitor
+}
+
+Table users as u {
+    id bigserial [pk]
+    name varchar [not null, note:'用户名']
+    password text [not null, note:'密码']
+    status user_status [not null, note:'用户状态']
+    permission permission [not null, note:'权限']
+    create_at timestamptz [not null, default: 'now()']
+}
+
+Table clients as c {
+    id bigserial [pk]
+    domain varchar [not null, note: 'domain']
+    create_at timestamptz [not null, default: 'now()']
+}
+
+Table tokens as t {
+    id bigserial [pk]
+    user_id bigserial [not null, ref: > u.id, note:'user外键']
+    expires_at timestamptz [not null, note: 'token失效时间']
+    token text [not null, note: 'access token']
+    token_secretkey text [not null, note: 'token secretkey']
+    create_at timestamptz [not null, default: 'now()']
+}
+
+table codes {
+    id bigserial [pk]
+    code text [not null, note: 'code']
+    token_id bigserial [not null, ref: > t.id, note:'token外键']
+    expires_at timestamptz [not null, note: 'code失效时间']
+    create_at timestamptz [not null, default: 'now()']
+} 

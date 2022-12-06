@@ -1,35 +1,59 @@
-enum payTypeMethod {
+enum paytype {
     wechat 
     ali
 }
 
-enum StatusEnum {
+enum status {
   success [note:'交易成功']
   fail [note:'交易失败']
   close [note:'交易关闭']
-
+  repayment [note:"还款"]
+  transfer [note:"转账"]
+  collection [note:"收款"]
 }
 
 table pays as p{
   id bigserial [pk]
+  trade_id varchar [unique, not null, note: "交易单号"]
+  seller_id varchar [not null, note: "商家单号"]
   type varchar [not null, note:'收/支']
-  person varchar [note:'交易人员']
+  person varchar [not null,note:'交易人员']
   account varchar [note:'对方账号']
   instructions text [note:'说明']
-  type_method varchar [note:'支付方式']
-  amount int8 [note:'金额,实际金额乘以100']
-  status StatusEnum [note:'交易状态']
-  category bigserial [ref: > p_c.id, note:'交易类型']
-  trading_hours timestamptz [note:'交易时间']
+  type_method varchar [not null, note:'支付方式']
+  amount integer [not null, note:'金额,实际金额乘以100']
+  status varchar [not null, note:'交易状态']
+  category varchar [not null, note:'交易类型']
+  trading_hours timestamptz [not null, note:'交易时间']
   remark text [note:'备注']
-  pay_type payTypeMethod [note:'支付工具类型']
   create_at timestamptz [not null, default: 'now()']
+  pay_type paytype [not null, note:'支付工具类型']
+  pay_status status [not null, note:'支付状态']
+  pay_category bigserial [not null, ref: > p_c.id, note:'支付状态']
+
 }
 
 table pay_category as p_c {
     id bigserial [pk]
-    name varchar [not null, note:'名字']
-    pid int8 [not null, default: 0, note:'父级id']
+    name varchar [unique, not null, note:'名字']
+    pid bigserial [not null, note:'父级id']
     ancestors varchar [not null, note:'tag树的路径,逗号隔开']
     create_at timestamptz [not null, default: 'now()']
 }
+
+
+table menus as m {
+  id bigserial [pk]
+  name varchar [not null, note:'路由名称']
+  path varchar [not null, note:'路由路径']
+  component varchar [not null, note:'组件名称,用来匹配前端存储的路由']
+  redirect varchar [note:'重定向地址(只存在模块根路由)']
+  meta_title varchar [not null, note:'菜单显示名称']
+  meta_sort bigserial [note:'菜单排序']
+  meta_active_menu varchar [ note:'菜单默认点击状态路径(只存在于模块根路由)']
+  pid bigserial [not null, note:'父级id']
+  ancestors varchar [not null, note:'menu树的路径,逗号隔开']
+  create_at timestamptz [not null, default: 'now()']
+  update_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+}
+

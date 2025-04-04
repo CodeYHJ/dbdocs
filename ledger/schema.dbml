@@ -1,0 +1,76 @@
+Project  {
+  database_type: 'PostgreSQL'
+  Note: 'SaveMore -- 记录消费，存更多钱'
+}
+
+// 账单表
+Table "bill" {
+  "id" integer [pk, not null]
+  "transaction_type" "character varying(50)" [not null, note: '收/支']
+  "counterparty" "character varying(255)" [not null, note: '交易对方']
+  "counterparty_account" "character varying(255)" [note: '对方账号']
+  "description" text [not null, note: '商品说明']
+  "payment_method" "character varying(50)" [not null, note: '收/付款方式']
+  "amount" numeric(10,2) [not null, note: '金额']
+  "order_status" "character varying(50)" [not null, note: '交易状态']
+  "transaction_category" "character varying(50)" [not null, note: '交易类型']
+  "transaction_id" "character varying(255)" [not null, note: '交易ID']
+  "merchant_order_id" "character varying(255)" [note: '商户订单号']
+  "order_time" timestamp [not null, note: '订单交易时间']
+  source_id int [not null, note: '关联账单来源表的ID']
+  "created_at" timestamp [default: `CURRENT_TIMESTAMP`]
+  "updated_at" timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+// 账单来源表
+Table "bill_source"{
+  id integer [pk, not null]
+  name "character varying(50)" [not null, note: '来源名称，如：支付宝、微信']
+  desc text [note:'来源描述']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+// one to many
+Ref: "bill_source".id < "bill".source_id [delete: cascade]
+
+// 分类表
+Table "category" {
+  id integer [pk, not null]
+  name "character varying(255)" [not null, note: '分类名字']
+  pid integer [not null, default: 0, note: '父级ID']
+  desc text [note: '描述']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table "bill_category_relation" {
+  id integer [pk, not null]
+  bill_id integer [not null,note: 'bill ID']
+  category_id integer [not null,note: 'category ID']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+  // 建立索引
+  Indexes {
+    (bill_id,category_id) [unique, name: 'unique_bill_category_relation']
+  }
+}
+
+// many to many
+Ref: "bill_category_relation".bill_id <> "bill".id
+Ref: "bill_category_relation".category_id <> "category".id
+
+// 分类规则表
+Table "classification_rules"{
+  id integer [pk, not null]
+  name "character varying(255)" [not null, note: '规则名字']
+  desc text [note: '描述']
+  trigger_condition text [not null, note: '触发条件，例如交易描述包含某些关键词']
+  category_id interger [not null, note: '目标分类ID，符合条件的账单将被分到该分类']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+// one to many
+Ref: "category".id < "classification_rules".category_id
+

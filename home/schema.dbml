@@ -38,6 +38,7 @@ table pay_category as p_c {
     name varchar [unique, not null, note:'名字']
     pid bigserial [not null, note:'父级id']
     ancestors varchar [not null, note:'tag树的路径,逗号隔开']
+    color varchar [note:'tag颜色']
     create_at timestamptz [not null, default: 'now()']
 }
 
@@ -54,6 +55,6 @@ table menus as m {
   pid bigserial [not null, note:'父级id']
   ancestors varchar [not null, note:'menu树的路径,逗号隔开']
   create_at timestamptz [not null, default: 'now()']
-  update_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  update_at timestamptz [not null, default: `current_timestamp`]
 }
 
